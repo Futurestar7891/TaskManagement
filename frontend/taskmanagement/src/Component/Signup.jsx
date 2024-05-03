@@ -41,6 +41,8 @@ function Signup() {
       if (data.success == true) {
         alert.show(data.message);
         navigate("/");
+      } else if (data.success == false) {
+        alert.show(data.message);
       } else {
         alert.show(
           data.errors.map((err, idx) => {

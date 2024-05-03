@@ -1,8 +1,10 @@
 const express = require("express");
+const cookieParser = require("cookie-parser");
 const connection = require("./Rotutesanddatabase/database");
 const dotenv = require("dotenv");
 const cors = require("cors");
 const app = express();
+
 const userRoutes = require("./User/createloginuser");
 const taskRoutes = require("./Rotutesanddatabase/taskroutes");
 
@@ -10,6 +12,7 @@ connection();
 
 dotenv.config({ path: "backend/config.env" });
 app.use(express.json()); // Apply the body-parser middleware for parsing JSON bodies
+app.use(cookieParser());
 
 app.use(cors());
 

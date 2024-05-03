@@ -29,11 +29,14 @@ router.post(
           message: "Please fill all details",
         });
       } else if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+        return res.status(401).json({ errors: errors.array() });
       }
       const userExist = await userschema.findOne({ Email: Email });
       if (userExist) {
-        return res.status(400).json({ message: "User already registered" });
+        return res.status(401).json({
+          success: false,
+          message: "User already registered",
+        });
       }
 
       const hashedPassword = await bcrypt.hash(Password, 10);
