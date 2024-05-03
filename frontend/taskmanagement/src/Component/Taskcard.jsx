@@ -1,6 +1,8 @@
 import { useState } from "react";
+import { useAlert } from "react-alert";
 
 function Taskcard({ task, index, getTask }) {
+  const alert = useAlert();
   const [edittask, setEdittask] = useState(false);
   const [updatetask, setUpdatetask] = useState(task.task);
 
@@ -27,11 +29,11 @@ function Taskcard({ task, index, getTask }) {
       });
       const jsondata = await response.json();
       if (jsondata.success === true) {
-        console.log("Task updated successfully");
+        alert.show(jsondata.message);
         getTask();
         setEdittask(false);
       } else {
-        console.log(jsondata);
+        alert.show(jsondata.message);
       }
     } catch (error) {
       console.error("Error updating task:", error);
@@ -52,10 +54,10 @@ function Taskcard({ task, index, getTask }) {
       });
       const jsondata = await response.json();
       if (jsondata.success === true) {
-        console.log("Task deleted successfully");
+        alert.show(jsondata.message);
         getTask();
       } else {
-        console.log(jsondata);
+        alert.show(jsondata.message);
       }
     } catch (error) {
       console.error("Error updating task:", error);

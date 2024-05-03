@@ -2,8 +2,10 @@ import { useState, useEffect } from "react";
 import Taskcard from "./Taskcard";
 import { NavLink } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import { useAlert } from "react-alert";
 
 function Home() {
+  const alert = useAlert();
   const navigate = useNavigate();
   const [inputValue, setinputValue] = useState("");
   const [date, setDate] = useState("");
@@ -24,10 +26,10 @@ function Home() {
       });
       const jsondata = await response.json();
       if (jsondata.success === true) {
-        console.log("Task added successfully");
+        alert.show(jsondata.message);
         getTask();
       } else {
-        console.log(jsondata);
+        alert.show(jsondata.message);
       }
     } catch (error) {
       console.error("Error:", error);

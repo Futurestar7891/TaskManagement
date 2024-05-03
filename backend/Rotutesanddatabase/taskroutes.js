@@ -8,31 +8,36 @@ router.post("/createtask", async (req, res) => {
     console.log(Email, task);
 
     const userexist = await userschema.findOne({ Email: Email });
-    if (userexist && task.length > 0) {
-      const taskexist = userexist.Usertasks.some(
-        (taskdata) => taskdata.task === task
-      );
-
-      if (!taskexist) {
-        try {
-          userexist.Usertasks.push({
-            task: task,
-            date: date,
-          });
-          await userexist.save();
-          res.status(200).json({
-            success: true,
-            message: "The Task is Added Successfully",
-          });
-        } catch (error) {
+    if (userexist) {
+      if (task.length > 0) {
+        const taskexist = userexist.Usertasks.some(
+          (taskdata) => taskdata.task === task
+        );
+        if (!taskexist) {
+          try {
+            userexist.Usertasks.push({
+              task: task,
+              date: date,
+            });
+            await userexist.save();
+            res.status(200).json({
+              success: true,
+              message: "The Task is Added Successfully",
+            });
+          } catch (error) {
+            res.status(401).json({
+              message: "problem in finding task",
+            });
+          }
+        } else {
           res.status(401).json({
-            message: "problem in finding task",
+            success: false,
+            message: "task already exist",
           });
         }
       } else {
         res.status(401).json({
-          success: false,
-          message: "task already exist",
+          message: "task should not be empty",
         });
       }
     } else {
