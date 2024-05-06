@@ -1,10 +1,14 @@
 const express = require("express");
 const { body, validationResult } = require("express-validator");
 const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
-const tokenexpiretime = "1d";
 const router = express.Router();
 const userschema = require("../Schema/userschema");
+const { createjwttoken } = require("../jwtauth");
+
+const options = {
+  expiresIn: new Date(Date.now() + process.env.COOKIEEXPIRE),
+  httpOnly: true,
+};
 
 router.post(
   "/signup",
@@ -31,27 +35,35 @@ router.post(
       } else if (!errors.isEmpty()) {
         return res.status(401).json({ errors: errors.array() });
       }
-      const userExist = await userschema.findOne({ Email: Email });
-      if (userExist) {
-        return res.status(401).json({
-          success: false,
-          message: "User already registered",
-        });
-      }
 
-      const hashedPassword = await bcrypt.hash(Password, 10);
-      await userschema.create({
-        Name,
-        Email,
-        Mobile,
-        Password: hashedPassword,
-      });
-      res.status(200).json({
-        success: true,
-        message: "User registered successfully",
-      });
+      try {
+        const userExist = await userschema.findOne({ Email: Email });
+        if (userExist) {
+          return res.status(401).json({
+            success: false,
+            message: "User already registered",
+          });
+        }
+
+        const hashedPassword = await bcrypt.hash(Password, 10);
+        const userdata = await userschema.create({
+          Name,
+          Email,
+          Mobile,
+          Password: hashedPassword,
+        });
+        await userdata.save();
+        const token = createjwttoken({ id: userdata._id });
+        res.status(201).cookie("token", token, options).json({
+          success: true,
+          id: userdata._id,
+          Token: token,
+          message: "User registered successfully",
+        });
+      } catch (error) {
+        console.log(error);
+      }
     } catch (error) {
-      console.error(error);
       res.status(500).json({ message: "Internal server error" });
     }
   }
@@ -68,6 +80,7 @@ router.post(
   async (req, res) => {
     try {
       const { Email, Password } = req.body;
+      console.log(Email, Password);
       const errors = validationResult(req);
       if (!Email || !Password) {
         return res.status(401).json({
@@ -77,43 +90,57 @@ router.post(
       } else if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors });
       }
-
-      const userExist = await userschema.findOne({ Email: Email });
-      if (!userExist) {
-        return res.status(400).json({
-          success: false,
-          message: "User not found, please register first",
-        });
-      }
-
-      const matchPassword = await bcrypt.compare(Password, userExist.Password);
-      if (!matchPassword) {
-        return res.status(401).json({
-          success: false,
-          message: "Incorrect password",
-        });
-      }
-
-      const token = jwt.sign(
-        { id: userExist._id },
-        process.env.JWTSECRET || "your_secret_key_here",
-        {
-          expiresIn: tokenexpiretime,
+      try {
+        const userExist = await userschema.findOne({ Email: Email });
+        if (!userExist) {
+          return res.status(400).json({
+            success: false,
+            message: "User not found, please register first",
+          });
         }
-      );
 
-      res.status(200).json({
-        success: true,
-        message: "Login successful",
-        Token: token,
-        Name: userExist.Name,
-        Email: userExist.Email,
-      });
+        const matchPassword = await bcrypt.compare(
+          Password,
+          userExist.Password
+        );
+        if (!matchPassword) {
+          return res.status(401).json({
+            success: false,
+            message: "Incorrect password",
+          });
+        }
+        const token = createjwttoken({ id: userExist._id });
+
+        res.status(200).cookie("token", token, options).json({
+          success: true,
+          message: "Login successful",
+          Token: token,
+          Name: userExist.Name,
+          Email: userExist.Email,
+        });
+      } catch (error) {
+        console.log(error, "hai bhai");
+      }
     } catch (error) {
-      console.error(error);
       res.status(500).json({ message: "Internal server error" });
     }
   }
 );
+
+router.post("/logout", async (req, res) => {
+  try {
+    res.clearCookie("token", null, {
+      expiresIn: new Date(Date.now()),
+      httpOnly: true,
+    });
+
+    res.status(200).json({
+      success: true,
+      message: "successfully logout",
+    });
+  } catch (error) {
+    console.log("error");
+  }
+});
 
 module.exports = router;

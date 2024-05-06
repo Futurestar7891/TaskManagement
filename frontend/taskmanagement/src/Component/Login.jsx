@@ -45,7 +45,7 @@ const Login = () => {
 
         navigate("/Home");
         alert.show(data.message);
-      } else if (data.success == false) {
+      } else if (data.success === false) {
         alert.show(data.message);
       } else {
         alert.show(

@@ -1,11 +1,13 @@
 const express = require("express");
 const userschema = require("../Schema/userschema");
 const router = express.Router();
+const { jwttokenmiddleware } = require("../jwtauth");
+
+router.use(jwttokenmiddleware);
 
 router.post("/createtask", async (req, res) => {
   try {
     const { Email, task, date } = req.body;
-    console.log(Email, task);
 
     const userexist = await userschema.findOne({ Email: Email });
     if (userexist) {
@@ -58,6 +60,7 @@ router.post("/gettask", async (req, res) => {
     const { Email } = req.body;
     const userexist = await userschema.findOne({ Email: Email });
     if (userexist) {
+      console.log("user is exist");
       try {
         const taskdata = userexist.Usertasks;
         res.status(200).json({
@@ -65,6 +68,7 @@ router.post("/gettask", async (req, res) => {
           taskdata: taskdata,
         });
       } catch (error) {
+        console.log("error is found", error);
         res.status(401).json({
           message: "problem in finding task",
         });
@@ -76,6 +80,7 @@ router.post("/gettask", async (req, res) => {
       });
     }
   } catch (error) {
+    console.log("problem .............");
     res.status(401).json({
       message: "Technical error",
     });

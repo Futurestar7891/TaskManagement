@@ -38,6 +38,7 @@ function Home() {
 
   const getTask = async () => {
     try {
+      console.log("enterd in gettask api");
       const response = await fetch("http://localhost:3000/api/gettask", {
         method: "POST",
         headers: {
@@ -52,7 +53,7 @@ function Home() {
         console.log(jsondata.taskdata);
         settaskArray(jsondata.taskdata);
       } else {
-        console.log("something wrong");
+        console.log("something wrong", jsondata.message);
       }
     } catch (error) {
       console.error("Error:", error);
@@ -62,18 +63,32 @@ function Home() {
   useEffect(() => {
     getTask();
   }, []);
-  const logout = (e) => {
-    e.preventDefault();
-    localStorage.removeItem("Token");
-    navigate("/");
 
-    console.log(localStorage.getItem("Token"));
+  const logout = async () => {
+    try {
+      const response = await fetch("http://localhost:3000/api/logout", {
+        method: "POST",
+      });
+      const jsondata = await response.json();
+      if (jsondata.success === true) {
+        localStorage.removeItem("Token");
+        navigate("/");
+        alert.show(jsondata.message);
+      } else {
+        // Show error message to the user if logout fails
+        alert.show(jsondata.message);
+      }
+    } catch (error) {
+      // Handle any errors that occur during the logout process
+      console.error("Error:", error);
+    }
   };
 
   const notimplemented = () => {
     window.alert("not implemented");
   };
-  return (
+
+  return localStorage.getItem("Token") ? (
     <div className="homecontainer">
       <div className="profile">
         <div className="profileimg">
@@ -131,6 +146,8 @@ function Home() {
         </div>
       </div>
     </div>
+  ) : (
+    <div>please login first</div>
   );
 }
 
