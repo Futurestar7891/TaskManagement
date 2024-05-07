@@ -1,3 +1,7 @@
+body {
+  overflow-x: hidden; /* Hide scroll bars */
+}
+
 .mainsigndiv,
 .mainlogindiv {
   display: flex;
@@ -70,23 +74,94 @@
   background-color: rgb(236, 216, 216);
 }
 .profile {
-  margin-left: 1vw;
+  position: fixed;
+  top: 0px;
   margin-right: 1vw;
   width: 20vw;
-  min-height: 95vh;
-  border: 2px solid green;
+  min-height: 100vh;
+  /* border: 2px solid green; */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: azure;
 }
+.profilecontainer {
+  /* border: 2px solid blue; */
+  width: 100%;
+}
+.profileimage {
+  margin-top: 2vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  min-height: 20vh;
+  /* border: 2px solid yellow; */
+}
+
+.profileimage > img {
+  width: 30%;
+  object-fit: cover;
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+  /* border: 2px solid green; */
+  transition: all 0.3s ease; /* Adding a transition to all properties over 0.3 seconds with ease timing function */
+}
+.profiledetails {
+  border-radius: 2vh;
+  width: 100%;
+  min-height: 45vh;
+  /* border: 2px solid rgb(38, 0, 128); */
+  margin-top: 5vh;
+  margin-left: 2vw;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+}
+
+.Navlink {
+  font-weight: bold;
+  margin-bottom: 1vh;
+  font-size: large;
+  text-decoration: none;
+  color: black;
+}
+
+.profilebutton {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 20vh;
+}
+
+.profilebutton > button {
+  width: 80%;
+  background-color: red;
+  border-radius: 1vw;
+  padding: 1vh;
+  font-size: 1.5vw;
+  box-sizing: border-box;
+}
+
 .todo {
   width: 78vw;
   margin-right: 1vw;
+  margin-left: 22vw;
   min-height: 95vh;
-  border: 2px solid green;
+  /* border: 2px solid green; */
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
 }
 .taskinput {
-  width: 100%;
+  position: fixed;
+  top: 0px;
+  left: 20vw;
+  background-color: rgb(236, 216, 216);
+  z-index: 4;
+  width: 80%;
   height: 20vh;
   /* border: 2px solid rgb(60, 0, 128); */
   /* background-color: red; */
@@ -95,7 +170,7 @@
   align-items: center;
 }
 .taskinput > input[type="text"] {
-  width: 60%;
+  width: 40%;
   background-color: white;
   padding: 2vh;
   border-radius: 1.2vw;
@@ -126,8 +201,9 @@
   justify-content: flex-start;
   gap: 2vw;
   width: 100%;
-  margin-top: 1vh;
+  margin-top: 20vh;
   flex-wrap: wrap;
+  overflow-x: hidden;
 }
 .cardcontainer {
   width: 100%;
@@ -176,62 +252,35 @@
 .cardcontainerbutton > button:nth-child(2) {
   background-color: red;
 }
-.profileimage {
-  border-radius: 2vh;
+.loadercontainer {
   display: flex;
-  flex-direction: column;
+  flex-direction: column-reverse;
   justify-content: center;
-  align-items: center;
-  width: 100%;
-  min-height: 20vh;
-  /* border: 2px solid yellow; */
-}
-.profileimage > img {
-  max-height: 10vh;
-  object-fit: cover;
-  aspect-ratio: 1 / 1;
-  border-radius: 50%;
-  transition: all 0.3s ease; /* Adding a transition to all properties over 0.3 seconds with ease timing function */
-}
-
-.profileimage > img:hover {
-  transform: scale(
-    2
-  ); /* Scale the image to 110% of its original size on hover */
-}
-.profiledetails {
-  border-radius: 2vh;
-  width: 100%;
-  min-height: 45vh;
-  /* border: 2px solid rgb(38, 0, 128); */
-  margin-top: 5vh;
-  margin-left: 2vw;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-around;
-}
-
-.Navlink {
-  font-weight: bold;
-  margin-bottom: 1vh;
-  font-size: large;
-  text-decoration: none;
+  min-height: 100vh;
+  width: 100vw;
   color: black;
-}
-
-.profilebutton {
-  width: 100%;
   display: flex;
-  justify-content: center;
   align-items: center;
-  min-height: 20vh;
+  background-color: rgb(236, 216, 216);
+}
+.loader {
+  border: 2px solid green;
+  width: 100vw;
+  height: 100vh;
+  border: 8px solid #f3f3f3; /* Light grey */
+  border-top: 8px solid #3498db; /* Blue */
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 1s linear infinite;
+  margin: 20px auto;
 }
 
-.profilebutton > button {
-  width: 80%;
-  background-color: red;
-  border-radius: 1vw;
-  padding: 1vh;
-  font-size: 1.5vw;
-  box-sizing: border-box;
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }

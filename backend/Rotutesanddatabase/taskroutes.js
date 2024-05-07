@@ -11,7 +11,7 @@ router.post("/createtask", async (req, res) => {
 
     const userexist = await userschema.findOne({ Email: Email });
     if (userexist) {
-      if (task.length > 0) {
+      if (task.length > 0 && date.length > 0) {
         const taskexist = userexist.Usertasks.some(
           (taskdata) => taskdata.task === task
         );

@@ -14,13 +14,13 @@ connection();
 
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors());
+// Update CORS configuration to allow credentials
+app.use(cors({ credentials: true, origin: "http://localhost:5173" }));
 
 app.use("/api", userRoutes);
 app.use("/api", taskRoutes);
 
-const PORT = process.env.PORT;
-console.log(PORT, "ye dekh behncod");
+const PORT = process.env.PORT || 3000; // Provide a default port if not set in environment
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });

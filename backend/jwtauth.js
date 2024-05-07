@@ -8,23 +8,21 @@ const createjwttoken = ({ id }) => {
 };
 
 // authenticating token.....................
-
 const jwttokenmiddleware = (req, res, next) => {
-  const token = req.cookies.token;
-  if (!token) {
-    console.log("token nahi hai");
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    console.log("Token not found in headers");
     return res.status(401).json({ error: "Unauthorized access" });
   }
 
+  const token = authHeader.split(" ")[1];
   try {
-    const decodedata = jwt.verify(token, process.env.JWTSECRET);
-    req.user = decodedata;
+    const decodedData = jwt.verify(token, process.env.JWTSECRET);
+    req.user = decodedData;
     next();
   } catch (error) {
-    console.log("thats the problem");
-    return res.status(401).json({
-      error: "Invalid or expired token",
-    });
+    console.log("Invalid or expired token");
+    return res.status(401).json({ error: "Invalid or expired token" });
   }
 };
 

@@ -16,10 +16,13 @@ function Taskcard({ task, index, getTask }) {
 
   const updateTask = async () => {
     try {
+      const token = localStorage.getItem("Token"); // Retrieve JWT token from localStorage
+
       const response = await fetch("http://localhost:3000/api/updatetask", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // Include JWT token in the request headers
         },
         body: JSON.stringify({
           index: index,
@@ -42,10 +45,13 @@ function Taskcard({ task, index, getTask }) {
 
   const deleteTask = async () => {
     try {
+      const token = localStorage.getItem("Token"); // Retrieve JWT token from localStorage
+
       const response = await fetch("http://localhost:3000/api/deletetask", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // Include JWT token in the request headers
         },
         body: JSON.stringify({
           index: index,
@@ -63,6 +69,7 @@ function Taskcard({ task, index, getTask }) {
       console.error("Error updating task:", error);
     }
   };
+
   return (
     <div className="cardcontainer">
       <div className="cardcontainertask">

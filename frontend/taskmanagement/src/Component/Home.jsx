@@ -13,10 +13,12 @@ function Home() {
 
   const addTask = async () => {
     try {
+      const token = localStorage.getItem("Token");
       const response = await fetch("http://localhost:3000/api/createtask", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           Email: localStorage.getItem("Email"),
@@ -26,6 +28,7 @@ function Home() {
       });
       const jsondata = await response.json();
       if (jsondata.success === true) {
+        setinputValue("");
         alert.show(jsondata.message);
         getTask();
       } else {
@@ -38,11 +41,13 @@ function Home() {
 
   const getTask = async () => {
     try {
-      console.log("enterd in gettask api");
+      console.log("entered in gettask api");
+      const token = localStorage.getItem("Token");
       const response = await fetch("http://localhost:3000/api/gettask", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           Email: localStorage.getItem("Email"),
@@ -66,8 +71,13 @@ function Home() {
 
   const logout = async () => {
     try {
+      const token = localStorage.getItem("Token");
       const response = await fetch("http://localhost:3000/api/logout", {
         method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
       });
       const jsondata = await response.json();
       if (jsondata.success === true) {
@@ -75,11 +85,9 @@ function Home() {
         navigate("/");
         alert.show(jsondata.message);
       } else {
-        // Show error message to the user if logout fails
         alert.show(jsondata.message);
       }
     } catch (error) {
-      // Handle any errors that occur during the logout process
       console.error("Error:", error);
     }
   };
@@ -91,27 +99,25 @@ function Home() {
   return localStorage.getItem("Token") ? (
     <div className="homecontainer">
       <div className="profile">
-        <div className="profileimg">
-          <div className="profilecontainer">
-            <div className="profileimage">
-              <img src={localStorage.getItem("Img")} alt="" />
-              <strong>{localStorage.getItem("Name")}</strong>
-            </div>
-            <hr />
-            <div className="profiledetails">
-              <NavLink onClick={notimplemented} className="Navlink">
-                Profile Details
-              </NavLink>
-              <NavLink onClick={notimplemented} className="Navlink">
-                Edit Profile
-              </NavLink>
-              <NavLink onClick={notimplemented} className="Navlink" to="#">
-                Change Password
-              </NavLink>
-            </div>
-            <div className="profilebutton">
-              <button onClick={logout}>Logout</button>
-            </div>
+        <div className="profilecontainer">
+          <div className="profileimage">
+            <img src={localStorage.getItem("Img")} alt="" />
+            <strong>{localStorage.getItem("Name")}</strong>
+          </div>
+          <hr />
+          <div className="profiledetails">
+            <NavLink onClick={notimplemented} className="Navlink">
+              Profile Details
+            </NavLink>
+            <NavLink onClick={notimplemented} className="Navlink">
+              Edit Profile
+            </NavLink>
+            <NavLink onClick={notimplemented} className="Navlink" to="#">
+              Change Password
+            </NavLink>
+          </div>
+          <div className="profilebutton">
+            <button onClick={logout}>Logout</button>
           </div>
         </div>
       </div>
@@ -147,7 +153,10 @@ function Home() {
       </div>
     </div>
   ) : (
-    <div>please login first</div>
+    <div className="loadercontainer">
+      <div className="loader"></div>
+      <h2>Please Login First</h2>
+    </div>
   );
 }
 
